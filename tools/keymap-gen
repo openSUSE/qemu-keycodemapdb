@@ -20,6 +20,7 @@ except:
     sys.path.append(os.path.join(os.path.dirname(__file__), "../thirdparty"))
     import argparse
 import hashlib
+import os
 import time
 import sys
 
@@ -317,7 +318,11 @@ class LanguageGenerator(object):
         raise NotImplementedError()
 
     def generate_header(self, database, args):
-        today = time.strftime("%Y-%m-%d %H:%M")
+        sde = os.getenv("SOURCE_DATE_EPOCH")
+        if sde:
+            today = time.strftime("%Y-%m-%d %H:%M", time.gmtime(int(sde)))
+        else:
+            today = time.strftime("%Y-%m-%d %H:%M")
         self._boilerplate([
             "This file is auto-generated from keymaps.csv on %s" % today,
             "Database checksum sha256(%s)" % database.mapchecksum,
